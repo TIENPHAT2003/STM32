@@ -1,0 +1,8 @@
+../Core/Src/main.c:123:5:Kalman_getAngle	88	static
+../Core/Src/main.c:153:9:MPU6050_Init	32	static
+../Core/Src/main.c:185:6:MPU6050_Read_All	112	static
+../Core/Src/main.c:246:5:main	8	static
+../Core/Src/main.c:293:6:SystemClock_Config	72	static
+../Core/Src/main.c:333:13:MX_I2C1_Init	8	static
+../Core/Src/main.c:367:13:MX_GPIO_Init	24	static
+../Core/Src/main.c:389:6:Error_Handler	4	static,ignoring_inline_asm

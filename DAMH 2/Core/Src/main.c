@@ -257,7 +257,7 @@ EncoderRead ENC_R;
 MotorDrive 	Motor_L;
 MotorDrive 	Motor_R;
 
-//--------------------------------LQR Variables-------------------------------------------------//
+//--------------------------------LQR-------------------------------------------------//
 #define ToDeg 180/M_P
 #define ToRad M_PI/180
 
@@ -269,9 +269,26 @@ float k1,k2,k3,k4,k5,k6; // The factor of K matrix
 
 float leftvolt, rightvolt;
 
-float addtheta, addphi;
+float addtheta = 0, addphi = 0;
 
+float gettheta(int enc_l, int enc_r){
+	float angle =(0.5*360/370)*(enc_l+ enc_r);
+	return angle;
+}
 
+float getphi(int enc_l, int enc_r){
+	float angle = (enc_l + enc_r);
+	return angle;
+}
+long map(long x, long in_max, long in_min, long out_max, long out_min){
+	return (x-in_min)*(out_max-out_min)/(in_max-in_min) + out_min;
+}
+//LQR function
+void getLQR(float theta_,float thetadot_,float psi_,float psidot_,float phi_,float phidot_){
+	leftvolt = k1*theta_ + k2*thetadot_ + k3*psi_ + k4*psidot_ - k5*phi_ - k6*phidot_;
+	rightvolt = k1*theta_ + k2*thetadot_ + k3*psi_ + k4*psidot_ + k5*phi_ + k6*phidot_;
+}
+//--------------------------------LQR-------------------------------------------------//
 
 /* USER CODE END 0 */
 
@@ -316,8 +333,8 @@ int main(void)
   HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
   HAL_TIM_Encoder_Start(&htim4, TIM_CHANNEL_ALL);
 
-  EncoderSetting(&ENC_L, &htim2, 225, 0.001);
-  EncoderSetting(&ENC_R, &htim4, 225, 0.001);
+  EncoderSetting(&ENC_L, &htim2, 370, 0.001);
+  EncoderSetting(&ENC_R, &htim4, 370, 0.001);
 
   /* USER CODE END 2 */
 
@@ -660,12 +677,12 @@ void StartTaskFunction(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-//	SpeedReadNonReset(&ENC_R);
-//	SpeedReadNonReset(&ENC_L);
+	SpeedReadNonReset(&ENC_R);
+	SpeedReadNonReset(&ENC_L);
 	Drive(&Motor_R, &htim3, count1, TIM_CHANNEL_1, TIM_CHANNEL_2);
 	Drive(&Motor_L, &htim3, count2, TIM_CHANNEL_3, TIM_CHANNEL_4);
-	count1=CountRead(&ENC_L, count_ModeX1);
-	count2=CountRead(&ENC_R, count_ModeX1);
+//	count1=CountRead(&ENC_L, count_ModeX1);
+//	count2=CountRead(&ENC_R, count_ModeX1);
     osDelay(1);
   }
   /* USER CODE END StartTaskFunction */

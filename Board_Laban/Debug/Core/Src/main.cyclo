@@ -1,0 +1,8 @@
+../Core/Src/main.c:123:5:Kalman_getAngle	1
+../Core/Src/main.c:153:9:MPU6050_Init	2
+../Core/Src/main.c:185:6:MPU6050_Read_All	7
+../Core/Src/main.c:246:5:main	2
+../Core/Src/main.c:293:6:SystemClock_Config	3
+../Core/Src/main.c:333:13:MX_I2C1_Init	2
+../Core/Src/main.c:367:13:MX_GPIO_Init	1
+../Core/Src/main.c:389:6:Error_Handler	1
