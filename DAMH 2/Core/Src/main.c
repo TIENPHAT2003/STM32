@@ -66,7 +66,7 @@ void StartMPU6050ask(void const * argument);
 void StartTaskFunction(void const * argument);
 
 /* USER CODE BEGIN PFP */
-int count1,count2;
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -81,7 +81,7 @@ int count1,count2;
 #define TEMP_OUT_H_REG 0x41
 #define GYRO_CONFIG_REG 0x1B
 #define GYRO_XOUT_H_REG 0x43
-uint32_t timer;
+uint32_t timer,timerloop;
 // Kalman structure
 typedef struct
 {
@@ -261,6 +261,8 @@ MotorDrive 	Motor_R;
 #define ToDeg 180/M_P
 #define ToRad M_PI/180
 
+int enc_l,enc_r;
+
 float theta,psi,phi;
 float thetadot,psidot,phidot;
 float theta_old,psi_old,phi_old;
@@ -271,22 +273,61 @@ float leftvolt, rightvolt;
 
 float addtheta = 0, addphi = 0;
 
+float PWM_L,PWM_R;
+
 float gettheta(int enc_l, int enc_r){
 	float angle =(0.5*360/370)*(enc_l+ enc_r);
 	return angle;
 }
 
 float getphi(int enc_l, int enc_r){
-	float angle = (enc_l + enc_r);
+	float angle = (3.2/22.5)*(enc_l + enc_r);
 	return angle;
 }
 long map(long x, long in_max, long in_min, long out_max, long out_min){
 	return (x-in_min)*(out_max-out_min)/(in_max-in_min) + out_min;
 }
+long constrain(long x, long a, long b){
+	if(x<a) 			return a;
+	if(a<=x && x<=b) 	return x;
+	if(x>b) 			return b;
+}
 //LQR function
 void getLQR(float theta_,float thetadot_,float psi_,float psidot_,float phi_,float phidot_){
 	leftvolt = k1*theta_ + k2*thetadot_ + k3*psi_ + k4*psidot_ - k5*phi_ - k6*phidot_;
 	rightvolt = k1*theta_ + k2*thetadot_ + k3*psi_ + k4*psidot_ + k5*phi_ + k6*phidot_;
+	PWM_L = map(leftvolt, -(k3*M_PI)/15, (k3*M_PI)/15, -1000, 1000);//Limit 15 deg.
+	PWM_R = map(rightvolt, -(k3*M_PI)/15, (k3*M_PI)/15, -1000, 1000);
+
+	PWM_L = constrain(PWM_L, -1000, 1000);
+	PWM_R = constrain(PWM_R, -1000, 1000);
+}
+void getfunctionLQR(MPU6050_t *DataStruct){
+	if((HAL_GetTick() - timerloop) > 6) {//Set time loop update and control motor
+	    theta = gettheta(enc_l, enc_r)*ToRad; //Read theta value and convert to Rad
+	    psi = (DataStruct->KalmanAngleY + 2.1)*ToRad;     //Read psi value and convert to Rad
+	    phi =  getphi(enc_l, enc_r)*ToRad;    //Read phi value and convert to Rad
+
+	    //Update time compare with timeloop
+	    float dt = (float)(HAL_GetTick() - timer) / 1000;
+	    timerloop = HAL_GetTick();
+	    //Update input angle value
+	    thetadot = (theta - theta_old)/dt;
+	    psidot = (psi)/dt;
+	    phidot = (phi - phi_old)/dt;
+	    //Upadte old angle value
+	    theta_old = theta;
+	    psi_old = psi;
+	    phi_old = phi;
+	    //
+//	    addtheta = addtheta + ForwardBack*factortheta;
+//	    addphi = addphi + LeftRight*factorphi;
+
+//	    getLQR(theta + addtheta, thetadot, psi, psidot, phi + addphi, phidot);
+	    getLQR(theta,thetadot,psi,psidot,phi,phidot);
+	    Drive(&Motor_L, &htim3, leftvolt, TIM_CHANNEL_1, TIM_CHANNEL_2);
+	    Drive(&Motor_R, &htim3, rightvolt, TIM_CHANNEL_3, TIM_CHANNEL_4);
+	}
 }
 //--------------------------------LQR-------------------------------------------------//
 
@@ -677,12 +718,13 @@ void StartTaskFunction(void const * argument)
   /* Infinite loop */
   for(;;)
   {
-	SpeedReadNonReset(&ENC_R);
-	SpeedReadNonReset(&ENC_L);
-	Drive(&Motor_R, &htim3, count1, TIM_CHANNEL_1, TIM_CHANNEL_2);
-	Drive(&Motor_L, &htim3, count2, TIM_CHANNEL_3, TIM_CHANNEL_4);
-//	count1=CountRead(&ENC_L, count_ModeX1);
-//	count2=CountRead(&ENC_R, count_ModeX1);
+//	SpeedReadNonReset(&ENC_R);
+//	SpeedReadNonReset(&ENC_L);
+//	Drive(&Motor_R, &htim3, count1, TIM_CHANNEL_1, TIM_CHANNEL_2);
+//	Drive(&Motor_L, &htim3, count2, TIM_CHANNEL_3, TIM_CHANNEL_4);
+	enc_l=CountRead(&ENC_L, count_ModeX1);
+	enc_r=CountRead(&ENC_R, count_ModeX1);
+	getfunctionLQR(&MPU6050);
     osDelay(1);
   }
   /* USER CODE END StartTaskFunction */

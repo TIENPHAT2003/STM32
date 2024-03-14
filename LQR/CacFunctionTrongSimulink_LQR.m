@@ -34,28 +34,27 @@ y4 = -(2*Jw*a*vl + 2*Jw*a*vr - 4*Jw*beta*x2 + 4*Jw*beta*x5 + M*R^2*a*vl + M*R^2*
 y5 = x8;
 y6 = -(W^2*beta*x8 + W^2*fw*x8 + R*W*a*vl - R*W*a*vr + 4*L^2*M*R^2*x5*x8*cos(x4)*sin(x4))/(2*J_phi*R^2 + Jw*W^2 + Jm*W^2*n^2 + R^2*W^2*m + 2*L^2*M*R^2*sin(x4)^2)
 
-%% Thông số động cơ
-m = 1; %Khoi luong banh xe
-M = 5; %Khoi luong robot
-R = 0.0725; %ban kinh ban xe
-W = 0.24; %Chieu rong robot
-D = 0.2; %Chieu sau robot
-H = 0.5; %Chieu cao robot
-L = 0.18; %khoang cach tu trong tam den truc banh xe
+%% Thông số hệ thống xe 2 bánh tự cân bằng dùng LQR
+m = 0.0345; %Khoi luong banh xe
+M = 0.875; %Khoi luong robot
+R = 0.0325; %ban kinh ban xe
+W = 0.225; %Chieu rong robot
+D = 0.084; %Chieu sau robot
+H = 0.132; %Chieu cao robot
+L = 0.091; %khoang cach tu trong tam den truc banh xe
 fw = 0.18; %He so ma sat giua banh xe voi mat phang
 fm = 0.002; %he so ma sat giua dong co va robot
 Jm = 10^-2; %moment quan tinh cua dong co
 Jw = m*R^2/2;
 J_psi = M*L^2/3;
 J_phi = M*(W^2+D^2)/12;
-Rm = 50; %Dien tro dong co DC
+Rm = 13; %Dien tro dong co DC
 Kb = 0.468; %he so emf cua dong co
 Kt = 0.317; %Momen xoan cua dong co DC
-n = 40; %Ty so giam toc
+n = 33.64; %Ty so giam toc
 g = 9.81; %Gia toc trong truong
 alpha = n*Kt/Rm; beta=n*Kt*Kb/Rm+fm; a =alpha;
-T=0.01;
-
+T=0.001;
 
 %% Tính ma trận A
 % A =   [ diff(y1,x1) diff(y1,x2) diff(y1,x4) diff(y1,x5) diff(y1,x7) diff(y1,x8);
