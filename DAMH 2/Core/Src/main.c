@@ -313,12 +313,12 @@ void LQR_init(){
 
 
 
-	 k1 =	-13;		// k1*theta
-	 k2 =	 72;		// k2*thetadot
-	 k3 =	-200;		// k3*psi
-	 k4 =	-100;		// k4*psidot
-	 k5 =	-13;		// k5*phi
-	 k6 =	-34;		// k6*phidot
+	 k1 =	-31.6228;		// k1*theta
+	 k2 =	 82.1005;		// k2*thetadot
+	 k3 =	-283.7358;		// k3*psi
+	 k4 =	-94.8432;		// k4*psidot
+	 k5 =	-31.6228;		// k5*phi
+	 k6 =	-53.5225;		// k6*phidot
 	 StopandReset(&MPU6050);
 }
 void getLQR(float theta_,float thetadot_,float psi_,float psidot_,float phi_,float phidot_){
@@ -442,7 +442,6 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  MPU6050_Read_All(&MPU6050);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -726,7 +725,7 @@ void StartMPU6050ask(void const * argument)
   for(;;)
   {
 	MPU6050_Read_All(&MPU6050);
-    osDelay(10);
+    osDelay(100);
   }
   /* USER CODE END 5 */
 }
