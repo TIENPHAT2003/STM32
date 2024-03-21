@@ -123,20 +123,20 @@ B =[                                                                            
 %    -0.0048    0.0048]
 
 %% Tính thông số K của LQR
-R__ = [1 0; 0 1]; %Chọn R__ vì ở trên đã có R là bán kính bánh xe rồi
-Q = [ 1 0 0 0 0 0;
-      0 1 0 0 0 0;
-      0 0 1 0 0 0;
-      0 0 0 1 0 0;
-      0 0 0 0 1 0; 
-      0 0 0 0 0 1]
+R__ = [5 0; 0 5]; %Chọn R__ vì ở trên đã có R là bán kính bánh xe rồi
+Q = [ 10000 0 0 0 0 0;
+      0 1000 0 0 0 0;
+      0 0 10000 0 0 0;
+      0 0 0 100 0 0;
+      0 0 0 0 10000 0; 
+      0 0 0 0 0 1000]
  K = lqr(A,B,Q,R__)
 
  % Chọn thông số ban đầu
-x1_init = 0.001; x2_init = -0.0012; x4_init = 0.002; x5_init = -0.002; x7_init = 0.002; x8_init=-0.0014;
+%x1_init = 0.001; x2_init = -0.0012; x4_init = 0.002; x5_init = -0.002; x7_init = 0.002; x8_init=-0.0014;
 
 %
-x1_init = 0.01; x2_init = -0.012; x4_init = 0.2; x5_init = -0.02; x7_init = 0.04; x8_init=-0.03;
+x1_init = 0.001; x2_init = -0.0012; x4_init = 0.002; x5_init = -0.002; x7_init = 0.002; x8_init=-0.0014;
 
 
 

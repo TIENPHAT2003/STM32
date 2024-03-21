@@ -25,6 +25,7 @@
 #include"math.h"
 #include"Encoder.h"
 #include"MotorDrive.h"
+#include"stdlib.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -261,6 +262,7 @@ MotorDrive 	Motor_R;
 #define ToDeg 180/M_P
 #define ToRad M_PI/180
 
+
 int enc_l,enc_r;
 
 float theta,psi,phi;
@@ -270,8 +272,6 @@ float theta_old,psi_old,phi_old;
 float k1,k2,k3,k4,k5,k6; // The factor of K matrix
 
 float leftvolt, rightvolt;
-
-float addtheta = 0, addphi = 0;
 
 float PWM_L,PWM_R;
 
@@ -284,23 +284,51 @@ float getphi(int enc_l, int enc_r){
 	float angle = (3.2/22.5)*(enc_l + enc_r);
 	return angle;
 }
-long map(long x, long in_max, long in_min, long out_max, long out_min){
+float map(float x, float in_max, float in_min, float out_max, float out_min){
 	return (x-in_min)*(out_max-out_min)/(in_max-in_min) + out_min;
 }
-long constrain(long x, long a, long b){
+float constrain(float x, float a, float b){
 	if(x<a) 			return a;
-	if(a<=x && x<=b) 	return x;
-	if(x>b) 			return b;
+
+	else if(x>b) 		return b;
+
+	else 			 	return x;
 }
+
 //LQR function
+void StopandReset(MPU6050_t *DataStruct){
+	Drive(&Motor_R, &htim3, 0, TIM_CHANNEL_1, TIM_CHANNEL_2);
+	Drive(&Motor_L, &htim3, 0, TIM_CHANNEL_3, TIM_CHANNEL_4);
+	enc_l    = 0;
+	enc_r	 = 0;
+	DataStruct->KalmanAngleY=0;
+}
+void LQR_init(){
+//	 k1 =	-12.9099;		// k1*theta
+//	 k2 =	 71.2747;		// k2*thetadot
+//	 k3 =	-211.5505;		// k3*psi
+//	 k4 =	-80.3876;		// k4*psidot
+//	 k5 =	-12.9099;		// k5*phi
+//	 k6 =	-33.0436;		// k6*phidot
+
+
+
+	 k1 =	-13;		// k1*theta
+	 k2 =	 72;		// k2*thetadot
+	 k3 =	-200;		// k3*psi
+	 k4 =	-100;		// k4*psidot
+	 k5 =	-13;		// k5*phi
+	 k6 =	-34;		// k6*phidot
+	 StopandReset(&MPU6050);
+}
 void getLQR(float theta_,float thetadot_,float psi_,float psidot_,float phi_,float phidot_){
 	leftvolt = k1*theta_ + k2*thetadot_ + k3*psi_ + k4*psidot_ - k5*phi_ - k6*phidot_;
 	rightvolt = k1*theta_ + k2*thetadot_ + k3*psi_ + k4*psidot_ + k5*phi_ + k6*phidot_;
 	PWM_L = map(leftvolt, -(k3*M_PI)/15, (k3*M_PI)/15, -1000, 1000);//Limit 15 deg.
 	PWM_R = map(rightvolt, -(k3*M_PI)/15, (k3*M_PI)/15, -1000, 1000);
 
-	PWM_L = constrain(PWM_L, -1000, 1000);
-	PWM_R = constrain(PWM_R, -1000, 1000);
+	PWM_L = constrain(PWM_L, -300, 300);
+	PWM_R = constrain(PWM_R, -300, 300);
 }
 void getfunctionLQR(MPU6050_t *DataStruct){
 	if((HAL_GetTick() - timerloop) > 6) {//Set time loop update and control motor
@@ -315,18 +343,15 @@ void getfunctionLQR(MPU6050_t *DataStruct){
 	    thetadot = (theta - theta_old)/dt;
 	    psidot = (psi)/dt;
 	    phidot = (phi - phi_old)/dt;
-	    //Upadte old angle value
+	    //Update old angle value
 	    theta_old = theta;
 	    psi_old = psi;
 	    phi_old = phi;
-	    //
-//	    addtheta = addtheta + ForwardBack*factortheta;
-//	    addphi = addphi + LeftRight*factorphi;
 
-//	    getLQR(theta + addtheta, thetadot, psi, psidot, phi + addphi, phidot);
-	    getLQR(theta,thetadot,psi,psidot,phi,phidot);
-	    Drive(&Motor_L, &htim3, leftvolt, TIM_CHANNEL_1, TIM_CHANNEL_2);
-	    Drive(&Motor_R, &htim3, rightvolt, TIM_CHANNEL_3, TIM_CHANNEL_4);
+	    getLQR(theta, thetadot, psi, psidot, phi, phidot);
+
+		Drive(&Motor_R, &htim3, PWM_L, TIM_CHANNEL_1, TIM_CHANNEL_2);
+		Drive(&Motor_L, &htim3, PWM_R, TIM_CHANNEL_3, TIM_CHANNEL_4);
 	}
 }
 //--------------------------------LQR-------------------------------------------------//
@@ -377,6 +402,7 @@ int main(void)
   EncoderSetting(&ENC_L, &htim2, 370, 0.001);
   EncoderSetting(&ENC_R, &htim4, 370, 0.001);
 
+  LQR_init();
   /* USER CODE END 2 */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -700,7 +726,7 @@ void StartMPU6050ask(void const * argument)
   for(;;)
   {
 	MPU6050_Read_All(&MPU6050);
-    osDelay(100);
+    osDelay(10);
   }
   /* USER CODE END 5 */
 }
@@ -712,16 +738,16 @@ void StartMPU6050ask(void const * argument)
 * @retval None
 */
 /* USER CODE END Header_StartTaskFunction */
+int count1, count2;
 void StartTaskFunction(void const * argument)
 {
   /* USER CODE BEGIN StartTaskFunction */
   /* Infinite loop */
   for(;;)
   {
-//	SpeedReadNonReset(&ENC_R);
-//	SpeedReadNonReset(&ENC_L);
-//	Drive(&Motor_R, &htim3, count1, TIM_CHANNEL_1, TIM_CHANNEL_2);
-//	Drive(&Motor_L, &htim3, count2, TIM_CHANNEL_3, TIM_CHANNEL_4);
+
+//	Drive(&Motor_L, &htim3, count1, TIM_CHANNEL_1, TIM_CHANNEL_2);
+//	Drive(&Motor_R, &htim3, count2, TIM_CHANNEL_3, TIM_CHANNEL_4);
 	enc_l=CountRead(&ENC_L, count_ModeX1);
 	enc_r=CountRead(&ENC_R, count_ModeX1);
 	getfunctionLQR(&MPU6050);
