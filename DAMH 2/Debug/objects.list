@@ -1,5 +1,6 @@
 "./Core/Src/Encoder.o"
 "./Core/Src/MotorDrive.o"
+"./Core/Src/PID.o"
 "./Core/Src/freertos.o"
 "./Core/Src/main.o"
 "./Core/Src/stm32f4xx_hal_msp.o"

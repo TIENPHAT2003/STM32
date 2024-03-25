@@ -44,17 +44,17 @@ H = 0.132; %Chieu cao robot
 L = 0.091; %khoang cach tu trong tam den truc banh xe
 fw = 0.18; %He so ma sat giua banh xe voi mat phang
 fm = 0.002; %he so ma sat giua dong co va robot
-Jm = 10^-2; %moment quan tinh cua dong co
+Jm = 0.000082; %moment quan tinh cua dong co
 Jw = m*R^2/2;
 J_psi = M*L^2/3;
 J_phi = M*(W^2+D^2)/12;
 Rm = 13; %Dien tro dong co DC
-Kb = 0.468; %he so emf cua dong co
-Kt = 0.317; %Momen xoan cua dong co DC
+Kb = 1.91; %he so emf cua dong co
+Kt = 0.216 ; %Momen xoan cua dong co DC
 n = 33.64; %Ty so giam toc
 g = 9.81; %Gia toc trong truong
 alpha = n*Kt/Rm; beta=n*Kt*Kb/Rm+fm; a =alpha;
-T=0.001;
+T=0.01;
 
 %% Tính ma trận A
 % A =   [ diff(y1,x1) diff(y1,x2) diff(y1,x4) diff(y1,x5) diff(y1,x7) diff(y1,x8);
@@ -123,13 +123,13 @@ B =[                                                                            
 %    -0.0048    0.0048]
 
 %% Tính thông số K của LQR
-R__ = [5 0; 0 5]; %Chọn R__ vì ở trên đã có R là bán kính bánh xe rồi
-Q = [ 10000 0 0 0 0 0;
-      0 1000 0 0 0 0;
+R__ = [100 0; 0 100]; %Chọn R__ vì ở trên đã có R là bán kính bánh xe rồi
+Q = [ 1000 0 0 0 0 0;
+      0 10 0 0 0 0;
       0 0 10000 0 0 0;
-      0 0 0 100 0 0;
-      0 0 0 0 10000 0; 
-      0 0 0 0 0 1000]
+      0 0 0 1 0 0;
+      0 0 0 0 100000 0; 
+      0 0 0 0 0 10]
  K = lqr(A,B,Q,R__)
 
  % Chọn thông số ban đầu

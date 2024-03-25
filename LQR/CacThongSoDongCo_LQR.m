@@ -22,7 +22,7 @@ Kt = 0.317; %Momen xoan cua dong co DC
 n = 33.64; %Ty so giam toc
 g = 9.81; %Gia toc trong truong
 alpha = n*Kt/Rm; beta=n*Kt*Kb/Rm+fm; a =alpha;
-T=0.001;
+T=0.01;
 
 % Chọn thông số ban đầu
 x1_init = 0.001; x2_init = -0.0012; x4_init = 0.002; x5_init = -0.002; x7_init = 0.002; x8_init=-0.0014;

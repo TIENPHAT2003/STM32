@@ -1,3 +1,4 @@
+
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
@@ -73,7 +74,7 @@ void StartTaskFunction(void const * argument);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 #define RAD_TO_DEG (180/M_PI)
-
+#define DEG_TO_RAD (M_PI/180)
 #define WHO_AM_I_REG 0x75
 #define PWR_MGMT_1_REG 0x6B
 #define SMPLRT_DIV_REG 0x19
@@ -82,7 +83,9 @@ void StartTaskFunction(void const * argument);
 #define TEMP_OUT_H_REG 0x41
 #define GYRO_CONFIG_REG 0x1B
 #define GYRO_XOUT_H_REG 0x43
+#define MPU6050_ADDR 0xD0
 uint32_t timer,timerloop;
+
 // Kalman structure
 typedef struct
 {
@@ -117,9 +120,14 @@ typedef struct
     double KalmanAngleX;
     double KalmanAngleY;
 } MPU6050_t;
+
 MPU6050_t MPU6050;
+EncoderRead ENC_L;
+EncoderRead ENC_R;
+MotorDrive 	Motor_L;
+MotorDrive 	Motor_R;
 // Setup MPU6050
-#define MPU6050_ADDR 0xD0
+
 const uint16_t i2c_timeout = 100;
 const double Accel_Z_corrector = 14418.0;
 
@@ -251,18 +259,38 @@ void MPU6050_Read_All(MPU6050_t *DataStruct)
     DataStruct->KalmanAngleX = Kalman_getAngle(&KalmanX, roll, DataStruct->Gx, dt);
 }
 
-
-
-EncoderRead ENC_L;
-EncoderRead ENC_R;
-MotorDrive 	Motor_L;
-MotorDrive 	Motor_R;
-
 //--------------------------------LQR-------------------------------------------------//
-#define ToDeg 180/M_P
-#define ToRad M_PI/180
 
+typedef struct {
+	float theta;
+	float thetadot;
+	float theta_old;
+	float psi;
+	float psidot;
+	float psi_old;
+	float phi;
+	float phidot;
+	float phi_old;
+	float leftvolt;
+	float rightvolt;
+	float PWM_L;
+	float PWM_R;
+	int   enc_l;
+	int	  enc_r;
 
+}LQR_t;
+
+typedef struct{
+	float k1;
+	float k2;
+	float k3;
+	float k4;
+	float k5;
+	float k6;
+}LQR_KMatrix;
+
+LQR_t LQR_Var;
+LQR_KMatrix LQR_K;
 int enc_l,enc_r;
 
 float theta,psi,phi;
@@ -304,21 +332,21 @@ void StopandReset(MPU6050_t *DataStruct){
 	DataStruct->KalmanAngleY=0;
 }
 void LQR_init(){
-//	 k1 =	-12.9099;		// k1*theta
-//	 k2 =	 71.2747;		// k2*thetadot
-//	 k3 =	-211.5505;		// k3*psi
-//	 k4 =	-80.3876;		// k4*psidot
-//	 k5 =	-12.9099;		// k5*phi
-//	 k6 =	-33.0436;		// k6*phidot
+
+//	 k1 =	 -50;			// k1*theta
+//	 k2 =	 150;			// k2*thetadot
+//	 k3 =	-20000;			// k3*psi
+//	 k4 =	-500;			// k4*psidot
+//	 k5 =	-30;			// k5*phi
+//	 k6 =	-55;			// k6*phidot
 
 
-
-	 k1 =	-31.6228;		// k1*theta
-	 k2 =	 82.1005;		// k2*thetadot
-	 k3 =	-283.7358;		// k3*psi
-	 k4 =	-94.8432;		// k4*psidot
-	 k5 =	-31.6228;		// k5*phi
-	 k6 =	-53.5225;		// k6*phidot
+	 k1 =	-2;				// k1*theta
+	 k2 =	 0.5;				// k2*thetadot
+	 k3 =	-10000;			// k3*psi
+	 k4 =	-100;			// k4*psidot
+	 k5 =	-5;				// k5*phi
+	 k6 =	-1.5;			// k6*phidot
 	 StopandReset(&MPU6050);
 }
 void getLQR(float theta_,float thetadot_,float psi_,float psidot_,float phi_,float phidot_){
@@ -327,14 +355,14 @@ void getLQR(float theta_,float thetadot_,float psi_,float psidot_,float phi_,flo
 	PWM_L = map(leftvolt, -(k3*M_PI)/15, (k3*M_PI)/15, -1000, 1000);//Limit 15 deg.
 	PWM_R = map(rightvolt, -(k3*M_PI)/15, (k3*M_PI)/15, -1000, 1000);
 
-	PWM_L = constrain(PWM_L, -300, 300);
-	PWM_R = constrain(PWM_R, -300, 300);
+//	PWM_L = constrain(PWM_L, -300, 300);
+//	PWM_R = constrain(PWM_R, -300, 300);
 }
 void getfunctionLQR(MPU6050_t *DataStruct){
 	if((HAL_GetTick() - timerloop) > 6) {//Set time loop update and control motor
-	    theta = gettheta(enc_l, enc_r)*ToRad; //Read theta value and convert to Rad
-	    psi = (DataStruct->KalmanAngleY + 2.1)*ToRad;     //Read psi value and convert to Rad
-	    phi =  getphi(enc_l, enc_r)*ToRad;    //Read phi value and convert to Rad
+	    theta = gettheta(enc_l, enc_r)*DEG_TO_RAD; //Read theta value and convert to Rad
+	    psi = (DataStruct->KalmanAngleY + 2.25)*DEG_TO_RAD;     //Read psi value and convert to Rad
+	    phi =  getphi(enc_l, enc_r)*DEG_TO_RAD;    //Read phi value and convert to Rad
 
 	    //Update time compare with timeloop
 	    float dt = (float)(HAL_GetTick() - timer) / 1000;
@@ -349,7 +377,15 @@ void getfunctionLQR(MPU6050_t *DataStruct){
 	    phi_old = phi;
 
 	    getLQR(theta, thetadot, psi, psidot, phi, phidot);
-
+	    if(DataStruct->KalmanAngleY > 20 || DataStruct->KalmanAngleY < -20)
+	    {
+	    	PWM_L = constrain(PWM_L, -500, 500);
+	    	PWM_R = constrain(PWM_R, -500, 500);
+	    }
+	    else{
+	    	PWM_L = constrain(PWM_L, -300, 300);
+	    	PWM_R = constrain(PWM_R, -300, 300);
+	    }
 		Drive(&Motor_R, &htim3, PWM_L, TIM_CHANNEL_1, TIM_CHANNEL_2);
 		Drive(&Motor_L, &htim3, PWM_R, TIM_CHANNEL_3, TIM_CHANNEL_4);
 	}
@@ -399,8 +435,8 @@ int main(void)
   HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
   HAL_TIM_Encoder_Start(&htim4, TIM_CHANNEL_ALL);
 
-  EncoderSetting(&ENC_L, &htim2, 370, 0.001);
-  EncoderSetting(&ENC_R, &htim4, 370, 0.001);
+  EncoderSetting(&ENC_L, &htim2, 370, 0.01);
+  EncoderSetting(&ENC_R, &htim4, 370, 0.01);
 
   LQR_init();
   /* USER CODE END 2 */
@@ -725,7 +761,11 @@ void StartMPU6050ask(void const * argument)
   for(;;)
   {
 	MPU6050_Read_All(&MPU6050);
-    osDelay(100);
+	enc_l=CountRead(&ENC_L, count_ModeX1);
+	enc_r=CountRead(&ENC_R, count_ModeX1);
+	SpeedReadNonReset(&ENC_L);
+	SpeedReadNonReset(&ENC_R);
+    osDelay(10);
   }
   /* USER CODE END 5 */
 }
@@ -737,20 +777,14 @@ void StartMPU6050ask(void const * argument)
 * @retval None
 */
 /* USER CODE END Header_StartTaskFunction */
-int count1, count2;
 void StartTaskFunction(void const * argument)
 {
   /* USER CODE BEGIN StartTaskFunction */
   /* Infinite loop */
   for(;;)
   {
-
-//	Drive(&Motor_L, &htim3, count1, TIM_CHANNEL_1, TIM_CHANNEL_2);
-//	Drive(&Motor_R, &htim3, count2, TIM_CHANNEL_3, TIM_CHANNEL_4);
-	enc_l=CountRead(&ENC_L, count_ModeX1);
-	enc_r=CountRead(&ENC_R, count_ModeX1);
 	getfunctionLQR(&MPU6050);
-    osDelay(1);
+    osDelay(10);
   }
   /* USER CODE END StartTaskFunction */
 }
