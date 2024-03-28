@@ -333,20 +333,12 @@ void StopandReset(MPU6050_t *DataStruct){
 }
 void LQR_init(){
 
-//	 k1 =	 -50;			// k1*theta
-//	 k2 =	 150;			// k2*thetadot
-//	 k3 =	-20000;			// k3*psi
-//	 k4 =	-500;			// k4*psidot
-//	 k5 =	-30;			// k5*phi
-//	 k6 =	-55;			// k6*phidot
-
-
-	 k1 =	-2;				// k1*theta
-	 k2 =	 0.5;				// k2*thetadot
-	 k3 =	-10000;			// k3*psi
-	 k4 =	-100;			// k4*psidot
-	 k5 =	-5;				// k5*phi
-	 k6 =	-1.5;			// k6*phidot
+	 k1 =	-50;					// k1*theta
+	 k2 =	-1000;					// k2*thetadot
+	 k3 =	-15000;					// k3*psi
+	 k4 =	-150;					// k4*psidot
+	 k5 =	-0.5;					// k5*phi
+	 k6 =	-0.5;					// k6*phidot
 	 StopandReset(&MPU6050);
 }
 void getLQR(float theta_,float thetadot_,float psi_,float psidot_,float phi_,float phidot_){
@@ -360,16 +352,17 @@ void getLQR(float theta_,float thetadot_,float psi_,float psidot_,float phi_,flo
 }
 void getfunctionLQR(MPU6050_t *DataStruct){
 	if((HAL_GetTick() - timerloop) > 6) {//Set time loop update and control motor
-	    theta = gettheta(enc_l, enc_r)*DEG_TO_RAD; //Read theta value and convert to Rad
+	    theta = gettheta(enc_l, enc_r)*DEG_TO_RAD; 				//Read theta value and convert to Rad
 	    psi = (DataStruct->KalmanAngleY + 2.25)*DEG_TO_RAD;     //Read psi value and convert to Rad
-	    phi =  getphi(enc_l, enc_r)*DEG_TO_RAD;    //Read phi value and convert to Rad
+	    phi =  getphi(enc_l, enc_r)*DEG_TO_RAD;    				//Read phi value and convert to Rad
 
 	    //Update time compare with timeloop
-	    float dt = (float)(HAL_GetTick() - timer) / 1000;
+	    float dt = (float)(HAL_GetTick() - timer) / 100;
 	    timerloop = HAL_GetTick();
 	    //Update input angle value
 	    thetadot = (theta - theta_old)/dt;
 	    psidot = (psi)/dt;
+//	    psidot = (psi - psi_old)/dt;
 	    phidot = (phi - phi_old)/dt;
 	    //Update old angle value
 	    theta_old = theta;
@@ -377,7 +370,7 @@ void getfunctionLQR(MPU6050_t *DataStruct){
 	    phi_old = phi;
 
 	    getLQR(theta, thetadot, psi, psidot, phi, phidot);
-	    if(DataStruct->KalmanAngleY > 20 || DataStruct->KalmanAngleY < -20)
+	    if(DataStruct->KalmanAngleY > 15 || DataStruct->KalmanAngleY < -15)
 	    {
 	    	PWM_L = constrain(PWM_L, -500, 500);
 	    	PWM_R = constrain(PWM_R, -500, 500);

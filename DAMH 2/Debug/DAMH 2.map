@@ -6009,28 +6009,28 @@ LOAD C:/ST/STM32CubeIDE_1.14.1/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.ext
  .debug_macro   0x00000000000229dd      0x196 ./Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.o
  .debug_macro   0x0000000000022b73      0x1ae ./Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.o
 
-.debug_line     0x0000000000000000    0x15103
+.debug_line     0x0000000000000000    0x15101
  .debug_line    0x0000000000000000      0x8c1 ./Core/Src/Encoder.o
  .debug_line    0x00000000000008c1      0x9f1 ./Core/Src/MotorDrive.o
  .debug_line    0x00000000000012b2      0x866 ./Core/Src/freertos.o
- .debug_line    0x0000000000001b18     0x1199 ./Core/Src/main.o
- .debug_line    0x0000000000002cb1      0x8ae ./Core/Src/stm32f4xx_hal_msp.o
- .debug_line    0x000000000000355f      0x7e3 ./Core/Src/stm32f4xx_hal_timebase_tim.o
- .debug_line    0x0000000000003d42      0x804 ./Core/Src/stm32f4xx_it.o
- .debug_line    0x0000000000004546      0x7e9 ./Core/Src/system_stm32f4xx.o
- .debug_line    0x0000000000004d2f       0x7a ./Core/Startup/startup_stm32f407vetx.o
- .debug_line    0x0000000000004da9      0xa4f ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.o
- .debug_line    0x00000000000057f8      0xd1b ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.o
- .debug_line    0x0000000000006513      0xbc3 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.o
- .debug_line    0x00000000000070d6     0x3ab1 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c.o
- .debug_line    0x000000000000ab87      0xdc8 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.o
- .debug_line    0x000000000000b94f     0x37db ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.o
- .debug_line    0x000000000000f12a     0x1a4b ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.o
- .debug_line    0x0000000000010b75     0x1266 ./Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.o
- .debug_line    0x0000000000011ddb      0x796 ./Middlewares/Third_Party/FreeRTOS/Source/list.o
- .debug_line    0x0000000000012571     0x19a5 ./Middlewares/Third_Party/FreeRTOS/Source/tasks.o
- .debug_line    0x0000000000013f16      0x830 ./Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.o
- .debug_line    0x0000000000014746      0x9bd ./Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.o
+ .debug_line    0x0000000000001b18     0x1197 ./Core/Src/main.o
+ .debug_line    0x0000000000002caf      0x8ae ./Core/Src/stm32f4xx_hal_msp.o
+ .debug_line    0x000000000000355d      0x7e3 ./Core/Src/stm32f4xx_hal_timebase_tim.o
+ .debug_line    0x0000000000003d40      0x804 ./Core/Src/stm32f4xx_it.o
+ .debug_line    0x0000000000004544      0x7e9 ./Core/Src/system_stm32f4xx.o
+ .debug_line    0x0000000000004d2d       0x7a ./Core/Startup/startup_stm32f407vetx.o
+ .debug_line    0x0000000000004da7      0xa4f ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.o
+ .debug_line    0x00000000000057f6      0xd1b ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.o
+ .debug_line    0x0000000000006511      0xbc3 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.o
+ .debug_line    0x00000000000070d4     0x3ab1 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_i2c.o
+ .debug_line    0x000000000000ab85      0xdc8 ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.o
+ .debug_line    0x000000000000b94d     0x37db ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.o
+ .debug_line    0x000000000000f128     0x1a4b ./Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.o
+ .debug_line    0x0000000000010b73     0x1266 ./Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS/cmsis_os.o
+ .debug_line    0x0000000000011dd9      0x796 ./Middlewares/Third_Party/FreeRTOS/Source/list.o
+ .debug_line    0x000000000001256f     0x19a5 ./Middlewares/Third_Party/FreeRTOS/Source/tasks.o
+ .debug_line    0x0000000000013f14      0x830 ./Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F/port.o
+ .debug_line    0x0000000000014744      0x9bd ./Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/heap_4.o
 
 .debug_str      0x0000000000000000    0xd3d58
  .debug_str     0x0000000000000000    0xc3a7f ./Core/Src/Encoder.o

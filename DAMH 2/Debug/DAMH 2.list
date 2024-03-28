@@ -41,13 +41,13 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  18 .debug_macro  00022d21  00000000  00000000  00037529  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .debug_line   00015103  00000000  00000000  0005a24a  2**0
+ 19 .debug_line   00015101  00000000  00000000  0005a24a  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 20 .debug_str    000d3d58  00000000  00000000  0006f34d  2**0
+ 20 .debug_str    000d3d58  00000000  00000000  0006f34b  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_frame  00004fdc  00000000  00000000  001430a8  2**2
+ 21 .debug_frame  00004fdc  00000000  00000000  001430a4  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 22 .debug_line_str 0000003c  00000000  00000000  00148084  2**0
+ 22 .debug_line_str 0000003c  00000000  00000000  00148080  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -2795,34 +2795,30 @@ void StopandReset(MPU6050_t *DataStruct){
 void LQR_init(){
  8001bd0:	b580      	push	{r7, lr}
  8001bd2:	af00      	add	r7, sp, #0
-//	 k4 =	-500;			// k4*psidot
-//	 k5 =	-30;			// k5*phi
-//	 k6 =	-55;			// k6*phidot
 
-
-	 k1 =	-2;				// k1*theta
+	 k1 =	-50;					// k1*theta
  8001bd4:	4b0c      	ldr	r3, [pc, #48]	; (8001c08 <LQR_init+0x38>)
- 8001bd6:	f04f 4240 	mov.w	r2, #3221225472	; 0xc0000000
- 8001bda:	601a      	str	r2, [r3, #0]
-	 k2 =	 0.5;				// k2*thetadot
- 8001bdc:	4b0b      	ldr	r3, [pc, #44]	; (8001c0c <LQR_init+0x3c>)
- 8001bde:	f04f 527c 	mov.w	r2, #1056964608	; 0x3f000000
- 8001be2:	601a      	str	r2, [r3, #0]
-	 k3 =	-10000;			// k3*psi
- 8001be4:	4b0a      	ldr	r3, [pc, #40]	; (8001c10 <LQR_init+0x40>)
- 8001be6:	4a0b      	ldr	r2, [pc, #44]	; (8001c14 <LQR_init+0x44>)
- 8001be8:	601a      	str	r2, [r3, #0]
-	 k4 =	-100;			// k4*psidot
- 8001bea:	4b0b      	ldr	r3, [pc, #44]	; (8001c18 <LQR_init+0x48>)
- 8001bec:	4a0b      	ldr	r2, [pc, #44]	; (8001c1c <LQR_init+0x4c>)
- 8001bee:	601a      	str	r2, [r3, #0]
-	 k5 =	-5;				// k5*phi
- 8001bf0:	4b0b      	ldr	r3, [pc, #44]	; (8001c20 <LQR_init+0x50>)
- 8001bf2:	4a0c      	ldr	r2, [pc, #48]	; (8001c24 <LQR_init+0x54>)
- 8001bf4:	601a      	str	r2, [r3, #0]
-	 k6 =	-1.5;			// k6*phidot
- 8001bf6:	4b0c      	ldr	r3, [pc, #48]	; (8001c28 <LQR_init+0x58>)
- 8001bf8:	4a0c      	ldr	r2, [pc, #48]	; (8001c2c <LQR_init+0x5c>)
+ 8001bd6:	4a0d      	ldr	r2, [pc, #52]	; (8001c0c <LQR_init+0x3c>)
+ 8001bd8:	601a      	str	r2, [r3, #0]
+	 k2 =	-1000;					// k2*thetadot
+ 8001bda:	4b0d      	ldr	r3, [pc, #52]	; (8001c10 <LQR_init+0x40>)
+ 8001bdc:	4a0d      	ldr	r2, [pc, #52]	; (8001c14 <LQR_init+0x44>)
+ 8001bde:	601a      	str	r2, [r3, #0]
+	 k3 =	-15000;					// k3*psi
+ 8001be0:	4b0d      	ldr	r3, [pc, #52]	; (8001c18 <LQR_init+0x48>)
+ 8001be2:	4a0e      	ldr	r2, [pc, #56]	; (8001c1c <LQR_init+0x4c>)
+ 8001be4:	601a      	str	r2, [r3, #0]
+	 k4 =	-150;					// k4*psidot
+ 8001be6:	4b0e      	ldr	r3, [pc, #56]	; (8001c20 <LQR_init+0x50>)
+ 8001be8:	4a0e      	ldr	r2, [pc, #56]	; (8001c24 <LQR_init+0x54>)
+ 8001bea:	601a      	str	r2, [r3, #0]
+	 k5 =	-0.5;					// k5*phi
+ 8001bec:	4b0e      	ldr	r3, [pc, #56]	; (8001c28 <LQR_init+0x58>)
+ 8001bee:	f04f 423f 	mov.w	r2, #3204448256	; 0xbf000000
+ 8001bf2:	601a      	str	r2, [r3, #0]
+	 k6 =	-0.5;					// k6*phidot
+ 8001bf4:	4b0d      	ldr	r3, [pc, #52]	; (8001c2c <LQR_init+0x5c>)
+ 8001bf6:	f04f 423f 	mov.w	r2, #3204448256	; 0xbf000000
  8001bfa:	601a      	str	r2, [r3, #0]
 	 StopandReset(&MPU6050);
  8001bfc:	480c      	ldr	r0, [pc, #48]	; (8001c30 <LQR_init+0x60>)
@@ -2832,15 +2828,15 @@ void LQR_init(){
  8001c04:	bd80      	pop	{r7, pc}
  8001c06:	bf00      	nop
  8001c08:	200005f4 	.word	0x200005f4
- 8001c0c:	200005f8 	.word	0x200005f8
- 8001c10:	200005fc 	.word	0x200005fc
- 8001c14:	c61c4000 	.word	0xc61c4000
- 8001c18:	20000600 	.word	0x20000600
- 8001c1c:	c2c80000 	.word	0xc2c80000
- 8001c20:	20000604 	.word	0x20000604
- 8001c24:	c0a00000 	.word	0xc0a00000
- 8001c28:	20000608 	.word	0x20000608
- 8001c2c:	bfc00000 	.word	0xbfc00000
+ 8001c0c:	c2480000 	.word	0xc2480000
+ 8001c10:	200005f8 	.word	0x200005f8
+ 8001c14:	c47a0000 	.word	0xc47a0000
+ 8001c18:	200005fc 	.word	0x200005fc
+ 8001c1c:	c66a6000 	.word	0xc66a6000
+ 8001c20:	20000600 	.word	0x20000600
+ 8001c24:	c3160000 	.word	0xc3160000
+ 8001c28:	20000604 	.word	0x20000604
+ 8001c2c:	20000608 	.word	0x20000608
  8001c30:	200004b0 	.word	0x200004b0
  8001c34:	00000000 	.word	0x00000000
 
@@ -3070,7 +3066,7 @@ void getfunctionLQR(MPU6050_t *DataStruct){
  8001eca:	1ad3      	subs	r3, r2, r3
  8001ecc:	2b06      	cmp	r3, #6
  8001ece:	f240 812c 	bls.w	800212a <getfunctionLQR+0x272>
-	    theta = gettheta(enc_l, enc_r)*DEG_TO_RAD; //Read theta value and convert to Rad
+	    theta = gettheta(enc_l, enc_r)*DEG_TO_RAD; 				//Read theta value and convert to Rad
  8001ed2:	4b9c      	ldr	r3, [pc, #624]	; (8002144 <getfunctionLQR+0x28c>)
  8001ed4:	681b      	ldr	r3, [r3, #0]
  8001ed6:	4a9c      	ldr	r2, [pc, #624]	; (8002148 <getfunctionLQR+0x290>)
@@ -3113,7 +3109,7 @@ void getfunctionLQR(MPU6050_t *DataStruct){
  8001f36:	4603      	mov	r3, r0
  8001f38:	4a86      	ldr	r2, [pc, #536]	; (8002154 <getfunctionLQR+0x29c>)
  8001f3a:	6013      	str	r3, [r2, #0]
-	    phi =  getphi(enc_l, enc_r)*DEG_TO_RAD;    //Read phi value and convert to Rad
+	    phi =  getphi(enc_l, enc_r)*DEG_TO_RAD;    				//Read phi value and convert to Rad
  8001f3c:	4b81      	ldr	r3, [pc, #516]	; (8002144 <getfunctionLQR+0x28c>)
  8001f3e:	681b      	ldr	r3, [r3, #0]
  8001f40:	4a81      	ldr	r2, [pc, #516]	; (8002148 <getfunctionLQR+0x290>)
@@ -3137,7 +3133,7 @@ void getfunctionLQR(MPU6050_t *DataStruct){
  8001f70:	6013      	str	r3, [r2, #0]
 
 	    //Update time compare with timeloop
-	    float dt = (float)(HAL_GetTick() - timer) / 1000;
+	    float dt = (float)(HAL_GetTick() - timer) / 100;
  8001f72:	f000 fe69 	bl	8002c48 <HAL_GetTick>
  8001f76:	4602      	mov	r2, r0
  8001f78:	4b78      	ldr	r3, [pc, #480]	; (800215c <getfunctionLQR+0x2a4>)
@@ -3171,6 +3167,7 @@ void getfunctionLQR(MPU6050_t *DataStruct){
  8001fc4:	eec6 7a87 	vdiv.f32	s15, s13, s14
  8001fc8:	4b68      	ldr	r3, [pc, #416]	; (800216c <getfunctionLQR+0x2b4>)
  8001fca:	edc3 7a00 	vstr	s15, [r3]
+//	    psidot = (psi - psi_old)/dt;
 	    phidot = (phi - phi_old)/dt;
  8001fce:	4b62      	ldr	r3, [pc, #392]	; (8002158 <getfunctionLQR+0x2a0>)
  8001fd0:	ed93 7a00 	vldr	s14, [r3]
@@ -3218,7 +3215,7 @@ void getfunctionLQR(MPU6050_t *DataStruct){
  8002038:	eef0 0a47 	vmov.f32	s1, s14
  800203c:	eeb0 0a67 	vmov.f32	s0, s15
  8002040:	f7ff fdfa 	bl	8001c38 <getLQR>
-	    if(DataStruct->KalmanAngleY > 20 || DataStruct->KalmanAngleY < -20)
+	    if(DataStruct->KalmanAngleY > 15 || DataStruct->KalmanAngleY < -15)
  8002044:	687b      	ldr	r3, [r7, #4]
  8002046:	e9d3 0114 	ldrd	r0, r1, [r3, #80]	; 0x50
  800204a:	f04f 0200 	mov.w	r2, #0
@@ -3320,15 +3317,15 @@ void getfunctionLQR(MPU6050_t *DataStruct){
  8002154:	200005d4 	.word	0x200005d4
  8002158:	200005d8 	.word	0x200005d8
  800215c:	200004a4 	.word	0x200004a4
- 8002160:	447a0000 	.word	0x447a0000
+ 8002160:	42c80000 	.word	0x42c80000
  8002164:	200005e8 	.word	0x200005e8
  8002168:	200005dc 	.word	0x200005dc
  800216c:	200005e0 	.word	0x200005e0
  8002170:	200005f0 	.word	0x200005f0
  8002174:	200005e4 	.word	0x200005e4
  8002178:	200005ec 	.word	0x200005ec
- 800217c:	40340000 	.word	0x40340000
- 8002180:	c0340000 	.word	0xc0340000
+ 800217c:	402e0000 	.word	0x402e0000
+ 8002180:	c02e0000 	.word	0xc02e0000
  8002184:	20000614 	.word	0x20000614
  8002188:	43fa0000 	.word	0x43fa0000
  800218c:	c3fa0000 	.word	0xc3fa0000
