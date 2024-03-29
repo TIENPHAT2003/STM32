@@ -27,6 +27,7 @@
 #include"Encoder.h"
 #include"MotorDrive.h"
 #include"stdlib.h"
+#include "PID.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -73,6 +74,33 @@ void StartTaskFunction(void const * argument);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+/*-----------------------------Begin:PID DC Macro(SPEED)----------------------*/
+#define L_DCProportion 			1
+#define L_DCIntegral			30
+#define L_DCDerivatite			0.001
+#define L_DCAlpha				0
+#define L_DCDeltaT				0.01
+#define L_DCIntegralAboveLimit	1000
+#define L_DCIntegralBelowLimit	-1000
+#define L_DCSumAboveLimit 		1000
+#define L_DCSumBelowLimit		-1000
+PID_Param	PID_DC_SPEED_L;
+float SpeedTest_DC_Speed;
+/*-----------------------------End:PID DC Macro(SPEED)------------------------*/
+
+/*-----------------------------Begin:PID DC Macro(SPEED)----------------------*/
+#define R_DCProportion 			1
+#define R_DCIntegral			30
+#define R_DCDerivatite			0.001
+#define R_DCAlpha				0
+#define R_DCDeltaT				0.01
+#define R_DCIntegralAboveLimit	1000
+#define R_DCIntegralBelowLimit	-1000
+#define R_DCSumAboveLimit 		1000
+#define R_DCSumBelowLimit		-1000
+PID_Param	PID_DC_SPEED_R;
+//float SpeedTest_DC_Speed;
+/*-----------------------------End:PID DC Macro(SPEED)------------------------*/
 #define RAD_TO_DEG (180/M_PI)
 #define DEG_TO_RAD (M_PI/180)
 #define WHO_AM_I_REG 0x75
@@ -333,10 +361,10 @@ void StopandReset(MPU6050_t *DataStruct){
 }
 void LQR_init(){
 
-	 k1 =	-50;					// k1*theta
-	 k2 =	-1000;					// k2*thetadot
-	 k3 =	-15000;					// k3*psi
-	 k4 =	-150;					// k4*psidot
+	 k1 =	-1;						// k1*theta
+	 k2 =	-100;					// k2*thetadot
+	 k3 =	-50000;					// k3*psi
+	 k4 =	-5000;					// k4*psidot
 	 k5 =	-0.5;					// k5*phi
 	 k6 =	-0.5;					// k6*phidot
 	 StopandReset(&MPU6050);
@@ -344,47 +372,59 @@ void LQR_init(){
 void getLQR(float theta_,float thetadot_,float psi_,float psidot_,float phi_,float phidot_){
 	leftvolt = k1*theta_ + k2*thetadot_ + k3*psi_ + k4*psidot_ - k5*phi_ - k6*phidot_;
 	rightvolt = k1*theta_ + k2*thetadot_ + k3*psi_ + k4*psidot_ + k5*phi_ + k6*phidot_;
-	PWM_L = map(leftvolt, -(k3*M_PI)/15, (k3*M_PI)/15, -1000, 1000);//Limit 15 deg.
+	PWM_L = map(leftvolt, -(k3*M_PI)/15, (k3*M_PI)/15, -1000, 1000);		//Limit 15 deg.
 	PWM_R = map(rightvolt, -(k3*M_PI)/15, (k3*M_PI)/15, -1000, 1000);
-
-//	PWM_L = constrain(PWM_L, -300, 300);
-//	PWM_R = constrain(PWM_R, -300, 300);
 }
 void getfunctionLQR(MPU6050_t *DataStruct){
-	if((HAL_GetTick() - timerloop) > 6) {//Set time loop update and control motor
-	    theta = gettheta(enc_l, enc_r)*DEG_TO_RAD; 				//Read theta value and convert to Rad
-	    psi = (DataStruct->KalmanAngleY + 2.25)*DEG_TO_RAD;     //Read psi value and convert to Rad
-	    phi =  getphi(enc_l, enc_r)*DEG_TO_RAD;    				//Read phi value and convert to Rad
-
+	if((HAL_GetTick() - timerloop) > 6) {									//Set time loop update and control motor
+	    theta = gettheta(enc_l, enc_r)*DEG_TO_RAD; 							//Read theta value and convert to Rad
+	    psi = (DataStruct->KalmanAngleY + 2)*DEG_TO_RAD;    			//Read psi value and convert to Rad
+	    phi =  getphi(enc_l, enc_r)*DEG_TO_RAD;    							//Read phi value and convert to Rad
+	    if(abs(DataStruct->KalmanAngleY) <=2) {
+	    	PWM_L = 0;
+	    	PWM_R = 0;
+	    }
 	    //Update time compare with timeloop
 	    float dt = (float)(HAL_GetTick() - timer) / 100;
 	    timerloop = HAL_GetTick();
+
 	    //Update input angle value
 	    thetadot = (theta - theta_old)/dt;
-	    psidot = (psi)/dt;
-//	    psidot = (psi - psi_old)/dt;
+	    psidot = (psi - psi_old)/dt;
+//	    psidot = (psi)/dt;
 	    phidot = (phi - phi_old)/dt;
+
 	    //Update old angle value
 	    theta_old = theta;
 	    psi_old = psi;
 	    phi_old = phi;
 
 	    getLQR(theta, thetadot, psi, psidot, phi, phidot);
-	    if(DataStruct->KalmanAngleY > 15 || DataStruct->KalmanAngleY < -15)
-	    {
-	    	PWM_L = constrain(PWM_L, -500, 500);
-	    	PWM_R = constrain(PWM_R, -500, 500);
-	    }
-	    else{
-	    	PWM_L = constrain(PWM_L, -300, 300);
-	    	PWM_R = constrain(PWM_R, -300, 300);
-	    }
-		Drive(&Motor_R, &htim3, PWM_L, TIM_CHANNEL_1, TIM_CHANNEL_2);
-		Drive(&Motor_L, &htim3, PWM_R, TIM_CHANNEL_3, TIM_CHANNEL_4);
+//	    if(DataStruct->KalmanAngleY > 15 || DataStruct->KalmanAngleY < -15)
+//	    {
+//	    	PWM_L = constrain(PWM_L, -500, 500);
+//	    	PWM_R = constrain(PWM_R, -500, 500);
+//	    }
+//	    else{
+	    	PWM_L = constrain(PWM_L, -350, 350);
+	    	PWM_R = constrain(PWM_R, -350, 350);
+//	    }
+
+//		Drive(&Motor_L, &htim3, PWM_L, TIM_CHANNEL_1, TIM_CHANNEL_2);
+//		Drive(&Motor_R, &htim3, PWM_R, TIM_CHANNEL_3, TIM_CHANNEL_4);
 	}
 }
 //--------------------------------LQR-------------------------------------------------//
-
+void PID_Cal_Left(){
+	SpeedReadNonReset(&ENC_L);
+	Pid_Cal(&PID_DC_SPEED_L, PWM_L, ENC_L.vel_Real);
+	Drive(&Motor_L, &htim3, PID_DC_SPEED_L.u, TIM_CHANNEL_3, TIM_CHANNEL_4);
+}
+void PID_Cal_Right(){
+	SpeedReadNonReset(&ENC_R);
+	Pid_Cal(&PID_DC_SPEED_R, PWM_R, ENC_R.vel_Real);
+	Drive(&Motor_R, &htim3, PID_DC_SPEED_R.u, TIM_CHANNEL_1, TIM_CHANNEL_2);
+}
 /* USER CODE END 0 */
 
 /**
@@ -430,6 +470,8 @@ int main(void)
 
   EncoderSetting(&ENC_L, &htim2, 370, 0.01);
   EncoderSetting(&ENC_R, &htim4, 370, 0.01);
+  Pid_SetParam(&PID_DC_SPEED_R, R_DCProportion, R_DCIntegral, R_DCDerivatite, R_DCAlpha, R_DCDeltaT, R_DCIntegralAboveLimit, R_DCIntegralBelowLimit, R_DCSumAboveLimit, R_DCSumBelowLimit);
+  Pid_SetParam(&PID_DC_SPEED_L, L_DCProportion, L_DCIntegral, L_DCDerivatite, L_DCAlpha, L_DCDeltaT, L_DCIntegralAboveLimit, L_DCIntegralBelowLimit, L_DCSumAboveLimit, L_DCSumBelowLimit);
 
   LQR_init();
   /* USER CODE END 2 */
@@ -756,8 +798,8 @@ void StartMPU6050ask(void const * argument)
 	MPU6050_Read_All(&MPU6050);
 	enc_l=CountRead(&ENC_L, count_ModeX1);
 	enc_r=CountRead(&ENC_R, count_ModeX1);
-	SpeedReadNonReset(&ENC_L);
-	SpeedReadNonReset(&ENC_R);
+	PID_Cal_Left();
+	PID_Cal_Right();
     osDelay(10);
   }
   /* USER CODE END 5 */
@@ -777,6 +819,7 @@ void StartTaskFunction(void const * argument)
   for(;;)
   {
 	getfunctionLQR(&MPU6050);
+
     osDelay(10);
   }
   /* USER CODE END StartTaskFunction */
