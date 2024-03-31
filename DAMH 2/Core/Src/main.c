@@ -76,7 +76,7 @@ void StartTaskFunction(void const * argument);
 /* USER CODE BEGIN 0 */
 /*-----------------------------Begin:PID DC Macro(SPEED)----------------------*/
 #define L_DCProportion 			1
-#define L_DCIntegral			30
+#define L_DCIntegral			40
 #define L_DCDerivatite			0.001
 #define L_DCAlpha				0
 #define L_DCDeltaT				0.01
@@ -90,7 +90,7 @@ float SpeedTest_DC_Speed;
 
 /*-----------------------------Begin:PID DC Macro(SPEED)----------------------*/
 #define R_DCProportion 			1
-#define R_DCIntegral			30
+#define R_DCIntegral			40
 #define R_DCDerivatite			0.001
 #define R_DCAlpha				0
 #define R_DCDeltaT				0.01
@@ -363,7 +363,7 @@ void LQR_init(){
 
 	 k1 =	-1;						// k1*theta
 	 k2 =	-100;					// k2*thetadot
-	 k3 =	-50000;					// k3*psi
+	 k3 =	-80000;					// k3*psi
 	 k4 =	-5000;					// k4*psidot
 	 k5 =	-0.5;					// k5*phi
 	 k6 =	-0.5;					// k6*phidot
@@ -391,7 +391,6 @@ void getfunctionLQR(MPU6050_t *DataStruct){
 	    //Update input angle value
 	    thetadot = (theta - theta_old)/dt;
 	    psidot = (psi - psi_old)/dt;
-//	    psidot = (psi)/dt;
 	    phidot = (phi - phi_old)/dt;
 
 	    //Update old angle value
@@ -400,15 +399,9 @@ void getfunctionLQR(MPU6050_t *DataStruct){
 	    phi_old = phi;
 
 	    getLQR(theta, thetadot, psi, psidot, phi, phidot);
-//	    if(DataStruct->KalmanAngleY > 15 || DataStruct->KalmanAngleY < -15)
-//	    {
-//	    	PWM_L = constrain(PWM_L, -500, 500);
-//	    	PWM_R = constrain(PWM_R, -500, 500);
-//	    }
-//	    else{
-	    	PWM_L = constrain(PWM_L, -350, 350);
-	    	PWM_R = constrain(PWM_R, -350, 350);
-//	    }
+
+	    PWM_L = constrain(PWM_L, -200, 200);
+		PWM_R = constrain(PWM_R, -200, 200);
 
 //		Drive(&Motor_L, &htim3, PWM_L, TIM_CHANNEL_1, TIM_CHANNEL_2);
 //		Drive(&Motor_R, &htim3, PWM_R, TIM_CHANNEL_3, TIM_CHANNEL_4);
