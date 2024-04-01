@@ -3350,7 +3350,7 @@ void getfunctionLQR(MPU6050_t *DataStruct){
  800214a:	4603      	mov	r3, r0
  800214c:	4a79      	ldr	r2, [pc, #484]	; (8002334 <getfunctionLQR+0x234>)
  800214e:	6013      	str	r3, [r2, #0]
-	    psi = (DataStruct->KalmanAngleY + 2)*DEG_TO_RAD;    			//Read psi value and convert to Rad
+	    psi = (DataStruct->KalmanAngleY + 2)*DEG_TO_RAD;    				//Read psi value and convert to Rad
  8002150:	687b      	ldr	r3, [r7, #4]
  8002152:	e9d3 0114 	ldrd	r0, r1, [r3, #80]	; 0x50
  8002156:	f04f 0200 	mov.w	r2, #0

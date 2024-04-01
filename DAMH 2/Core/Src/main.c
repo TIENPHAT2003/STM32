@@ -378,7 +378,7 @@ void getLQR(float theta_,float thetadot_,float psi_,float psidot_,float phi_,flo
 void getfunctionLQR(MPU6050_t *DataStruct){
 	if((HAL_GetTick() - timerloop) > 6) {									//Set time loop update and control motor
 	    theta = gettheta(enc_l, enc_r)*DEG_TO_RAD; 							//Read theta value and convert to Rad
-	    psi = (DataStruct->KalmanAngleY + 2)*DEG_TO_RAD;    			//Read psi value and convert to Rad
+	    psi = (DataStruct->KalmanAngleY + 2)*DEG_TO_RAD;    				//Read psi value and convert to Rad
 	    phi =  getphi(enc_l, enc_r)*DEG_TO_RAD;    							//Read phi value and convert to Rad
 	    if(abs(DataStruct->KalmanAngleY) <=2) {
 	    	PWM_L = 0;
