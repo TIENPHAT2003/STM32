@@ -75,28 +75,8 @@ void StartTaskFunction(void const * argument);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 /*-----------------------------Begin:PID DC Macro(SPEED)----------------------*/
-//#define L_DCProportion 			1
-//#define L_DCIntegral			40
-//#define L_DCDerivatite			0.001
-//#define L_DCAlpha				0
-//#define L_DCDeltaT				0.01
-//#define L_DCIntegralAboveLimit	1000
-//#define L_DCIntegralBelowLimit	-1000
-//#define L_DCSumAboveLimit 		1000
-//#define L_DCSumBelowLimit		-1000
 PID_Param	PID_DC_SPEED_L;
-/*-----------------------------End:PID DC Macro(SPEED)------------------------*/
 
-/*-----------------------------Begin:PID DC Macro(SPEED)----------------------*/
-//#define R_DCProportion 			1
-//#define R_DCIntegral			40
-//#define R_DCDerivatite			0.001
-//#define R_DCAlpha				0
-//#define R_DCDeltaT				0.01
-//#define R_DCIntegralAboveLimit	1000
-//#define R_DCIntegralBelowLimit	-1000
-//#define R_DCSumAboveLimit 		1000
-//#define R_DCSumBelowLimit		-1000
 PID_Param	PID_DC_SPEED_R;
 /*-----------------------------End:PID DC Macro(SPEED)------------------------*/
 
@@ -327,17 +307,17 @@ void StopandReset(MPU6050_t *DataStruct){
 	Drive(&Motor_L, &htim3, 0, TIM_CHANNEL_3, TIM_CHANNEL_4);
 	enc_l    = 0;
 	enc_r	 = 0;
-	DataStruct->KalmanAngleY=0;
+	DataStruct->KalmanAngleY=-2;
 }
 void LQR_Init(){
 
 	 k1 =	-1;						// k1*theta
 	 k2 =	-100;					// k2*thetadot
-	 k3 =	-100000;				// k3*psi
+	 k3 =	-80000;					// k3*psi
 	 k4 =	-5000;					// k4*psidot
 	 k5 =	-0.5;					// k5*phi
 	 k6 =	-0.5;					// k6*phidot
-	 StopandReset(&MPU6050);
+
 }
 void getLQR(float theta_,float thetadot_,float psi_,float psidot_,float phi_,float phidot_){
 	leftvolt = k1*theta_ + k2*thetadot_ + k3*psi_ + k4*psidot_ - k5*phi_ - k6*phidot_;
@@ -458,6 +438,7 @@ int main(void)
 
   LQR_Init();
   PID_Init();
+  StopandReset(&MPU6050);
   /* USER CODE END 2 */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -803,22 +784,29 @@ void StartTaskFunction(void const * argument)
   for(;;)
   {
 	getfunctionLQR(&MPU6050);
-//	if(abs(MPU6050.KalmanAngleY)>20)
-//	{
-//		PID_DC_SPEED_L.kP = 3;
-//		PID_DC_SPEED_L.kI = 50;
-//		PID_DC_SPEED_L.kD = 0.001;
-//
-//		PID_DC_SPEED_R.kP = 3;
-//		PID_DC_SPEED_R.kI = 50;
-//		PID_DC_SPEED_R.kD = 0.001;
-//
-////		k4 = -20000;
-//	}
-//	else{
-//		PID_Init();
-//		LQR_Init();
-//	}
+	if(abs(MPU6050.KalmanAngleY)>10)
+	{
+		PID_DC_SPEED_L.kP = 5;
+		PID_DC_SPEED_L.kI = 10;
+		PID_DC_SPEED_L.kD = 0.001;
+
+		PID_DC_SPEED_R.kP = 5;
+		PID_DC_SPEED_R.kI = 10;
+		PID_DC_SPEED_R.kD = 0.001;
+
+		k4 = -50000;
+	}
+	else{
+		PID_DC_SPEED_L.kP = 1;
+		PID_DC_SPEED_L.kI = 30;
+		PID_DC_SPEED_L.kD = 0.001;
+
+		PID_DC_SPEED_R.kP = 1;
+		PID_DC_SPEED_R.kI = 30;
+		PID_DC_SPEED_R.kD = 0.001;
+
+		k4 = -5000;
+	}
     osDelay(10);
   }
   /* USER CODE END StartTaskFunction */
