@@ -75,32 +75,32 @@ void StartTaskFunction(void const * argument);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 /*-----------------------------Begin:PID DC Macro(SPEED)----------------------*/
-#define L_DCProportion 			1
-#define L_DCIntegral			40
-#define L_DCDerivatite			0.001
-#define L_DCAlpha				0
-#define L_DCDeltaT				0.01
-#define L_DCIntegralAboveLimit	1000
-#define L_DCIntegralBelowLimit	-1000
-#define L_DCSumAboveLimit 		1000
-#define L_DCSumBelowLimit		-1000
+//#define L_DCProportion 			1
+//#define L_DCIntegral			40
+//#define L_DCDerivatite			0.001
+//#define L_DCAlpha				0
+//#define L_DCDeltaT				0.01
+//#define L_DCIntegralAboveLimit	1000
+//#define L_DCIntegralBelowLimit	-1000
+//#define L_DCSumAboveLimit 		1000
+//#define L_DCSumBelowLimit		-1000
 PID_Param	PID_DC_SPEED_L;
-float SpeedTest_DC_Speed;
 /*-----------------------------End:PID DC Macro(SPEED)------------------------*/
 
 /*-----------------------------Begin:PID DC Macro(SPEED)----------------------*/
-#define R_DCProportion 			1
-#define R_DCIntegral			40
-#define R_DCDerivatite			0.001
-#define R_DCAlpha				0
-#define R_DCDeltaT				0.01
-#define R_DCIntegralAboveLimit	1000
-#define R_DCIntegralBelowLimit	-1000
-#define R_DCSumAboveLimit 		1000
-#define R_DCSumBelowLimit		-1000
+//#define R_DCProportion 			1
+//#define R_DCIntegral			40
+//#define R_DCDerivatite			0.001
+//#define R_DCAlpha				0
+//#define R_DCDeltaT				0.01
+//#define R_DCIntegralAboveLimit	1000
+//#define R_DCIntegralBelowLimit	-1000
+//#define R_DCSumAboveLimit 		1000
+//#define R_DCSumBelowLimit		-1000
 PID_Param	PID_DC_SPEED_R;
-//float SpeedTest_DC_Speed;
 /*-----------------------------End:PID DC Macro(SPEED)------------------------*/
+
+
 #define RAD_TO_DEG (180/M_PI)
 #define DEG_TO_RAD (M_PI/180)
 #define WHO_AM_I_REG 0x75
@@ -289,36 +289,6 @@ void MPU6050_Read_All(MPU6050_t *DataStruct)
 
 //--------------------------------LQR-------------------------------------------------//
 
-typedef struct {
-	float theta;
-	float thetadot;
-	float theta_old;
-	float psi;
-	float psidot;
-	float psi_old;
-	float phi;
-	float phidot;
-	float phi_old;
-	float leftvolt;
-	float rightvolt;
-	float PWM_L;
-	float PWM_R;
-	int   enc_l;
-	int	  enc_r;
-
-}LQR_t;
-
-typedef struct{
-	float k1;
-	float k2;
-	float k3;
-	float k4;
-	float k5;
-	float k6;
-}LQR_KMatrix;
-
-LQR_t LQR_Var;
-LQR_KMatrix LQR_K;
 int enc_l,enc_r;
 
 float theta,psi,phi;
@@ -359,11 +329,11 @@ void StopandReset(MPU6050_t *DataStruct){
 	enc_r	 = 0;
 	DataStruct->KalmanAngleY=0;
 }
-void LQR_init(){
+void LQR_Init(){
 
 	 k1 =	-1;						// k1*theta
 	 k2 =	-100;					// k2*thetadot
-	 k3 =	-80000;					// k3*psi
+	 k3 =	-100000;				// k3*psi
 	 k4 =	-5000;					// k4*psidot
 	 k5 =	-0.5;					// k5*phi
 	 k6 =	-0.5;					// k6*phidot
@@ -389,9 +359,9 @@ void getfunctionLQR(MPU6050_t *DataStruct){
 	    timerloop = HAL_GetTick();
 
 	    //Update input angle value
-	    thetadot = (theta - theta_old)/dt;
-	    psidot = (psi - psi_old)/dt;
-	    phidot = (phi - phi_old)/dt;
+	    thetadot 	= (theta - theta_old)/dt;
+	    psidot 		= (psi - psi_old)/dt;
+	    phidot 		= (phi - phi_old)/dt;
 
 	    //Update old angle value
 	    theta_old = theta;
@@ -408,6 +378,28 @@ void getfunctionLQR(MPU6050_t *DataStruct){
 	}
 }
 //--------------------------------LQR-------------------------------------------------//
+void PID_Init()
+{
+	PID_DC_SPEED_L.kP = 1;
+	PID_DC_SPEED_L.kI = 30;
+	PID_DC_SPEED_L.kD = 0.001;
+	PID_DC_SPEED_L.alpha = 0;
+	PID_DC_SPEED_L.deltaT = 0.01;
+	PID_DC_SPEED_L.uI_AboveLimit = 1000;
+	PID_DC_SPEED_L.uI_BelowLimit = -1000;
+	PID_DC_SPEED_L.u_AboveLimit  = 1000;
+	PID_DC_SPEED_L.u_BelowLimit  = -1000;
+
+	PID_DC_SPEED_R.kP = 1;
+	PID_DC_SPEED_R.kI = 30;
+	PID_DC_SPEED_R.kD = 0.001;
+	PID_DC_SPEED_R.alpha = 0;
+	PID_DC_SPEED_R.deltaT = 0.01;
+	PID_DC_SPEED_R.uI_AboveLimit = 1000;
+	PID_DC_SPEED_R.uI_BelowLimit = -1000;
+	PID_DC_SPEED_R.u_AboveLimit  = 1000;
+	PID_DC_SPEED_R.u_BelowLimit  = -1000;
+}
 void PID_Cal_Left(){
 	SpeedReadNonReset(&ENC_L);
 	Pid_Cal(&PID_DC_SPEED_L, PWM_L, ENC_L.vel_Real);
@@ -463,10 +455,9 @@ int main(void)
 
   EncoderSetting(&ENC_L, &htim2, 370, 0.01);
   EncoderSetting(&ENC_R, &htim4, 370, 0.01);
-  Pid_SetParam(&PID_DC_SPEED_R, R_DCProportion, R_DCIntegral, R_DCDerivatite, R_DCAlpha, R_DCDeltaT, R_DCIntegralAboveLimit, R_DCIntegralBelowLimit, R_DCSumAboveLimit, R_DCSumBelowLimit);
-  Pid_SetParam(&PID_DC_SPEED_L, L_DCProportion, L_DCIntegral, L_DCDerivatite, L_DCAlpha, L_DCDeltaT, L_DCIntegralAboveLimit, L_DCIntegralBelowLimit, L_DCSumAboveLimit, L_DCSumBelowLimit);
 
-  LQR_init();
+  LQR_Init();
+  PID_Init();
   /* USER CODE END 2 */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -812,7 +803,22 @@ void StartTaskFunction(void const * argument)
   for(;;)
   {
 	getfunctionLQR(&MPU6050);
-
+//	if(abs(MPU6050.KalmanAngleY)>20)
+//	{
+//		PID_DC_SPEED_L.kP = 3;
+//		PID_DC_SPEED_L.kI = 50;
+//		PID_DC_SPEED_L.kD = 0.001;
+//
+//		PID_DC_SPEED_R.kP = 3;
+//		PID_DC_SPEED_R.kI = 50;
+//		PID_DC_SPEED_R.kD = 0.001;
+//
+////		k4 = -20000;
+//	}
+//	else{
+//		PID_Init();
+//		LQR_Init();
+//	}
     osDelay(10);
   }
   /* USER CODE END StartTaskFunction */
