@@ -1,4 +1,3 @@
-
 /* USER CODE BEGIN Header */
 /**
   ******************************************************************************
@@ -54,6 +53,7 @@ TIM_HandleTypeDef htim4;
 
 osThreadId MPU6050TaskHandle;
 osThreadId FunctionTaskHandle;
+osThreadId Cal_PIDHandle;
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -67,6 +67,7 @@ static void MX_TIM3_Init(void);
 static void MX_TIM4_Init(void);
 void StartMPU6050ask(void const * argument);
 void StartTaskFunction(void const * argument);
+void StartTaskCalPID(void const * argument);
 
 /* USER CODE BEGIN PFP */
 
@@ -466,6 +467,10 @@ int main(void)
   osThreadDef(FunctionTask, StartTaskFunction, osPriorityNormal, 0, 128);
   FunctionTaskHandle = osThreadCreate(osThread(FunctionTask), NULL);
 
+  /* definition and creation of Cal_PID */
+  osThreadDef(Cal_PID, StartTaskCalPID, osPriorityNormal, 0, 128);
+  Cal_PIDHandle = osThreadCreate(osThread(Cal_PID), NULL);
+
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -784,7 +789,7 @@ void StartTaskFunction(void const * argument)
   for(;;)
   {
 	getfunctionLQR(&MPU6050);
-	if(abs(MPU6050.KalmanAngleY)>10)
+	if(MPU6050.KalmanAngleY > 3 || MPU6050.KalmanAngleY <-7)
 	{
 		PID_DC_SPEED_L.kP = 5;
 		PID_DC_SPEED_L.kI = 10;
@@ -810,6 +815,25 @@ void StartTaskFunction(void const * argument)
     osDelay(10);
   }
   /* USER CODE END StartTaskFunction */
+}
+
+/* USER CODE BEGIN Header_StartTaskCalPID */
+/**
+* @brief Function implementing the Cal_PID thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartTaskCalPID */
+void StartTaskCalPID(void const * argument)
+{
+  /* USER CODE BEGIN StartTaskCalPID */
+  /* Infinite loop */
+  for(;;)
+  {
+
+    osDelay(10);
+  }
+  /* USER CODE END StartTaskCalPID */
 }
 
 /**
