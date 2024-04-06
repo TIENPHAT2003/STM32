@@ -353,9 +353,6 @@ void getfunctionLQR(MPU6050_t *DataStruct){
 
 	    PWM_L = constrain(PWM_L, -200, 200);
 		PWM_R = constrain(PWM_R, -200, 200);
-
-//		Drive(&Motor_L, &htim3, PWM_L, TIM_CHANNEL_1, TIM_CHANNEL_2);
-//		Drive(&Motor_R, &htim3, PWM_R, TIM_CHANNEL_3, TIM_CHANNEL_4);
 	}
 }
 //--------------------------------LQR-------------------------------------------------//
@@ -791,15 +788,15 @@ void StartTaskFunction(void const * argument)
 	getfunctionLQR(&MPU6050);
 	if(MPU6050.KalmanAngleY > 3 || MPU6050.KalmanAngleY <-7)
 	{
-		PID_DC_SPEED_L.kP = 5;
+		PID_DC_SPEED_L.kP = 10;
 		PID_DC_SPEED_L.kI = 10;
 		PID_DC_SPEED_L.kD = 0.001;
 
-		PID_DC_SPEED_R.kP = 5;
+		PID_DC_SPEED_R.kP = 10;
 		PID_DC_SPEED_R.kI = 10;
 		PID_DC_SPEED_R.kD = 0.001;
 
-		k4 = -50000;
+		k4 = -10000;
 	}
 	else{
 		PID_DC_SPEED_L.kP = 1;
@@ -812,6 +809,8 @@ void StartTaskFunction(void const * argument)
 
 		k4 = -5000;
 	}
+
+
     osDelay(10);
   }
   /* USER CODE END StartTaskFunction */
