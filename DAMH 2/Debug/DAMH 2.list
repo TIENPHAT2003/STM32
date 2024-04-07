@@ -3004,7 +3004,7 @@ void LQR_Init(){
  8001da8:	4b0d      	ldr	r3, [pc, #52]	; (8001de0 <LQR_Init+0x48>)
  8001daa:	4a0e      	ldr	r2, [pc, #56]	; (8001de4 <LQR_Init+0x4c>)
  8001dac:	601a      	str	r2, [r3, #0]
-	 k4 =	-5000;					// k4*psidot
+	 k4 =	-8000;					// k4*psidot
  8001dae:	4b0e      	ldr	r3, [pc, #56]	; (8001de8 <LQR_Init+0x50>)
  8001db0:	4a0e      	ldr	r2, [pc, #56]	; (8001dec <LQR_Init+0x54>)
  8001db2:	601a      	str	r2, [r3, #0]
@@ -3030,7 +3030,7 @@ void LQR_Init(){
  8001de0:	2000069c 	.word	0x2000069c
  8001de4:	c79c4000 	.word	0xc79c4000
  8001de8:	200006a0 	.word	0x200006a0
- 8001dec:	c59c4000 	.word	0xc59c4000
+ 8001dec:	c5fa0000 	.word	0xc5fa0000
  8001df0:	200006a4 	.word	0x200006a4
  8001df4:	200006a8 	.word	0x200006a8
 
@@ -4655,7 +4655,7 @@ void StartTaskFunction(void const * argument)
  8002a62:	4a15      	ldr	r2, [pc, #84]	; (8002ab8 <StartTaskFunction+0xb0>)
  8002a64:	631a      	str	r2, [r3, #48]	; 0x30
 
-		k4 = -10000;
+		k4 = -15000;
  8002a66:	4b16      	ldr	r3, [pc, #88]	; (8002ac0 <StartTaskFunction+0xb8>)
  8002a68:	4a16      	ldr	r2, [pc, #88]	; (8002ac4 <StartTaskFunction+0xbc>)
  8002a6a:	601a      	str	r2, [r3, #0]
@@ -4688,7 +4688,7 @@ void StartTaskFunction(void const * argument)
  8002a92:	4a09      	ldr	r2, [pc, #36]	; (8002ab8 <StartTaskFunction+0xb0>)
  8002a94:	631a      	str	r2, [r3, #48]	; 0x30
 
-		k4 = -5000;
+		k4 = -8000;
  8002a96:	4b0a      	ldr	r3, [pc, #40]	; (8002ac0 <StartTaskFunction+0xb8>)
  8002a98:	4a0c      	ldr	r2, [pc, #48]	; (8002acc <StartTaskFunction+0xc4>)
  8002a9a:	601a      	str	r2, [r3, #0]
@@ -4708,9 +4708,9 @@ void StartTaskFunction(void const * argument)
  8002ab8:	3a83126f 	.word	0x3a83126f
  8002abc:	200004f8 	.word	0x200004f8
  8002ac0:	200006a0 	.word	0x200006a0
- 8002ac4:	c61c4000 	.word	0xc61c4000
+ 8002ac4:	c66a6000 	.word	0xc66a6000
  8002ac8:	41f00000 	.word	0x41f00000
- 8002acc:	c59c4000 	.word	0xc59c4000
+ 8002acc:	c5fa0000 	.word	0xc5fa0000
 
 08002ad0 <StartTaskCalPID>:
 * @param argument: Not used

@@ -315,7 +315,7 @@ void LQR_Init(){
 	 k1 =	-1;						// k1*theta
 	 k2 =	-100;					// k2*thetadot
 	 k3 =	-80000;					// k3*psi
-	 k4 =	-5000;					// k4*psidot
+	 k4 =	-8000;					// k4*psidot
 	 k5 =	-0.5;					// k5*phi
 	 k6 =	-0.5;					// k6*phidot
 
@@ -796,7 +796,7 @@ void StartTaskFunction(void const * argument)
 		PID_DC_SPEED_R.kI = 10;
 		PID_DC_SPEED_R.kD = 0.001;
 
-		k4 = -10000;
+		k4 = -15000;
 	}
 	else{
 		PID_DC_SPEED_L.kP = 1;
@@ -807,7 +807,7 @@ void StartTaskFunction(void const * argument)
 		PID_DC_SPEED_R.kI = 30;
 		PID_DC_SPEED_R.kD = 0.001;
 
-		k4 = -5000;
+		k4 = -8000;
 	}
 
 
