@@ -27,6 +27,7 @@
 #include"MotorDrive.h"
 #include"stdlib.h"
 #include "PID.h"
+#include "stdio.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -270,17 +271,17 @@ void MPU6050_Read_All(MPU6050_t *DataStruct)
 
 //--------------------------------LQR-------------------------------------------------//
 
-int enc_l,enc_r;
+int enc_l = 0,enc_r = 0;
 
-float theta,psi,phi;
-float thetadot,psidot,phidot;
-float theta_old,psi_old,phi_old;
+float theta = 0,psi = 0,phi = 0;
+float thetadot = 0,psidot = 0,phidot = 0;
+float theta_old = 0,psi_old = 0,phi_old = 0;
 
-float k1,k2,k3,k4,k5,k6; // The factor of K matrix
+float k1 = 0,k2 = 0,k3 = 0,k4 = 0,k5 = 0,k6 = 0; // The factor of K matrix
 
-float leftvolt, rightvolt;
+float leftvolt = 0, rightvolt = 0;
 
-float PWM_L,PWM_R;
+float PWM_L = 0,PWM_R = 0;
 
 float gettheta(int enc_l, int enc_r){
 	float angle =(0.5*360/370)*(enc_l+ enc_r);
@@ -288,7 +289,7 @@ float gettheta(int enc_l, int enc_r){
 }
 
 float getphi(int enc_l, int enc_r){
-	float angle = (3.2/22.5)*(enc_l + enc_r);
+	float angle = (3.2/22.5)*(enc_l - enc_r)*(360/370);
 	return angle;
 }
 float map(float x, float in_max, float in_min, float out_max, float out_min){
@@ -350,7 +351,6 @@ void getfunctionLQR(MPU6050_t *DataStruct){
 	    phi_old = phi;
 
 	    getLQR(theta, thetadot, psi, psidot, phi, phidot);
-
 	    PWM_L = constrain(PWM_L, -200, 200);
 		PWM_R = constrain(PWM_R, -200, 200);
 	}
@@ -388,6 +388,8 @@ void PID_Cal_Right(){
 	Pid_Cal(&PID_DC_SPEED_R, PWM_R, ENC_R.vel_Real);
 	Drive(&Motor_R, &htim3, PID_DC_SPEED_R.u, TIM_CHANNEL_1, TIM_CHANNEL_2);
 }
+
+
 /* USER CODE END 0 */
 
 /**
