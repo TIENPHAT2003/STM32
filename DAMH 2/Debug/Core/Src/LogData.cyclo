@@ -1,0 +1,6 @@
+../Core/Src/LogData.c:15:26:checkNull	2
+../Core/Src/LogData.c:20:6:log_Init	1
+../Core/Src/LogData.c:25:6:log_TransmitCompleteHandle	2
+../Core/Src/LogData.c:32:6:log_SendString	3
+../Core/Src/LogData.c:39:6:log_AddHeaderArgumentToBuffer	1
+../Core/Src/LogData.c:46:6:log_AddArgumentToBuffer	5
