@@ -26,4 +26,4 @@
 ../Core/Src/main.c:883:6:StartTaskFunction	3
 ../Core/Src/main.c:927:6:StartTaskCalPID	1
 ../Core/Src/main.c:947:6:HAL_TIM_PeriodElapsedCallback	4
-../Core/Src/main.c:977:6:Error_Handler	1
+../Core/Src/main.c:976:6:Error_Handler	1

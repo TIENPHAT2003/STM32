@@ -446,7 +446,7 @@ int main(void)
   HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_4);
   HAL_TIM_Encoder_Start(&htim2, TIM_CHANNEL_ALL);
   HAL_TIM_Encoder_Start(&htim4, TIM_CHANNEL_ALL);
-
+  HAL_TIM_Base_Start_IT(&htim5);
   EncoderSetting(&ENC_L, &htim2, 370, 0.01);
   EncoderSetting(&ENC_R, &htim4, 370, 0.01);
 
@@ -956,9 +956,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   if(htim->Instance == TIM5)
   {
 		count++;
-		if(count>=5)
+		if(count>=50)
 		{
-
 			log_AddArgumentToBuffer((void*)&theta,TYPE_FLOAT);
 			log_AddArgumentToBuffer((void*)&psi,TYPE_FLOAT);
 			log_AddArgumentToBuffer((void*)&phi,TYPE_FLOAT);
