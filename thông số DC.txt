@@ -1,0 +1,21 @@
+m (kg): khối lượng bánh xe 0.0345kg
+M (kg): khối luọng	   0.875kg
+R (m): bán kính bánh xe    0.0325m	
+W (m): chiều rộng robot	   0.225m
+D (m): chiều sâu robot	   0.084m
+H (m): chiều cao robot 	   0.132m
+L (m): khoảng cách từ trọng tâm robot đến trục bánh xe	0.091m
+fw: hệ số ma sát giữa bánh xe và mặt phẳng di chuyển	
+fm: hệ số ma sát giữa robot và động cơ DC	
+Jm (kg.m^2): moment quán tính của động cơ DC
+Jpsi:
+Jphi:
+Rm (Ohm): điện trở động cơ DC	13
+Kb (V sec/rad): Hệ số EMF của động cơ DC
+Kt (Nm/A): moment xoắn của động cơ DC
+n: tỉ số giảm tốc		33.64
+g: gia tốc trọng trường		9.81
+T (s): thời gian lấy mẫu	0.001s (1ms)
+
+
+Rm lấy VoM đo điện trở 2 đầu động cơ
